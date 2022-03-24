@@ -30,12 +30,14 @@ def image_fill(oimage,dimage,object_position,same_ratio=False):
     if same_ratio:
         oheight, owidth = oimage.shape[:2]
         original_ratio = oheight/owidth
-        if original_ratio > 1:
-            fill_image = cv2.resize(oimage,(round(original_ratio*dheight),dwidth))
+        destin_ratio = dheight/dwidth
+        if (original_ratio >= 1 and original_ratio >= destin_ratio) or (original_ratio < 1 and original_ratio > destin_ratio):
+            fill_image = cv2.resize(oimage,(round(original_ratio*dwidth),dwidth))
             dimage[left_top[0]:right_bottom[0] + 1, left_top[1]:right_bottom[1] + 1] = fill_image[:dheight+1]
         else:
-            fill_image = cv2.resize(oimage, (dheight, round(original_ratio * dwidth)))
+            fill_image = cv2.resize(oimage,(dheight,round(dheight/original_ratio)))
             dimage[left_top[0]:right_bottom[0] + 1, left_top[1]:right_bottom[1] + 1] = fill_image[:,:dwidth + 1]
+
     else:
         dimage[left_top[0]:right_bottom[0] + 1, left_top[1]:right_bottom[1] + 1] = cv2.resize(oimage,(dheight,dwidth))
     return dimage
